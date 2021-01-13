@@ -9,4 +9,6 @@ class Email extends Model
 {
     protected $table = 'mails';
 
+    protected $fillable = ['mail_from','mail_to','body','is_important','is_deleted'];
+
 }
