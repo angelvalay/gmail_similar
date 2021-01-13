@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Email;
 use Illuminate\Http\Response;
 
 class MailsController extends Controller
@@ -47,6 +48,7 @@ class MailsController extends Controller
     {
         // get instances
         // return instances
-        return 'return mails sent';
+        $mails = Email::all();
+        return \response()->json($mails);
     }
 }
