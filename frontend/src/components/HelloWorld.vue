@@ -5,28 +5,27 @@
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
           <md-icon>menu</md-icon>
         </md-button>
-        <span class="md-title">Inbox</span>
+        <span class="md-title">Bandeja de entrada</span>
       </md-app-toolbar>
 
       <md-app-drawer md-permanent="full" :md-active.sync="menuVisible">
         <md-toolbar class="md-transparent" md-elevation="0">
-          Navigation
+          <span class="md-title">Navegacion</span>
         </md-toolbar>
-
         <md-list>
           <md-list-item>
             <md-icon>move_to_inbox</md-icon>
-            <span class="md-list-item-text">Inbox</span>
+            <span class="md-list-item-text">Bandeja de entrada</span>
           </md-list-item>
 
           <md-list-item>
             <md-icon>send</md-icon>
-            <span class="md-list-item-text">Sent Mail</span>
+            <span class="md-list-item-text">Mensajes enviados</span>
           </md-list-item>
 
           <md-list-item>
             <md-icon>delete</md-icon>
-            <span class="md-list-item-text">Trash</span>
+            <span class="md-list-item-text">Basura</span>
           </md-list-item>
         </md-list>
       </md-app-drawer>
@@ -40,7 +39,7 @@
 
             <div class="md-list-item-text">
               <span>Ali Connors</span>
-              <span>Brunch this weekend?</span>
+              <span></span>
               <p>I'll be in your neighborhood doing errands this week. Do you want to meet?</p>
             </div>
 
@@ -58,7 +57,7 @@
 
             <div class="md-list-item-text">
               <span>me, Scott, Jennifer</span>
-              <span>Summer BBQ</span>
+              <span></span>
               <p>Wish I could come, but I'm out of town this week. :(</p>
             </div>
 
@@ -76,7 +75,7 @@
 
             <div class="md-list-item-text">
               <span>Sandra Adams</span>
-              <span>Oui oui</span>
+              <span></span>
               <p>Do you have Paris recommendations? Have you visited good places?</p>
             </div>
 
@@ -94,7 +93,7 @@
 
             <div class="md-list-item-text">
               <span>Trevor Hansen</span>
-              <span>Order confirmation</span>
+              <span></span>
               <p>Thank you for your recent order from Amazon</p>
             </div>
 
@@ -128,4 +127,5 @@ export default {
   padding: 0;
   min-height: 100vh;
 }
+
 </style>
