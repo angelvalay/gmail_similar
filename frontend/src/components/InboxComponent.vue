@@ -2,8 +2,8 @@
   <div>
     <!-- botones para marcar y eliminar -->
     <div v-if="this.selected">
-      <md-button class="md-primary">Mark to important ({{this.selected}})</md-button>
-      <md-button class="md-accent">move to trash ({{this.selected}})</md-button>
+      <md-button class="md-primary"><md-icon>grade</md-icon> mark as important ({{this.selected}})</md-button>
+      <md-button class="md-accent"><md-icon>delete</md-icon> move to trash ({{this.selected}})</md-button>
     </div>
     <!-- fin de los botones-->
     <md-list class="md-triple-line">
