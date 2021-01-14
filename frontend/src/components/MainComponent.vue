@@ -35,6 +35,7 @@
       <!-- fin de la barra -->
 
       <md-app-content>
+        <NewEmailComponent></NewEmailComponent>
         <InboxComponent v-if="optionMenuSelected === 0"></InboxComponent>
         <SentComponent v-else-if="optionMenuSelected === 1"></SentComponent>
         <TrashComponent v-else-if="optionMenuSelected === 2"></TrashComponent>
@@ -49,10 +50,11 @@
 import InboxComponent from "@/components/InboxComponent.vue";
 import SentComponent from "@/components/SentComponent";
 import TrashComponent from "@/components/TrashComponent.vue";
+import NewEmailComponent from "@/components/NewEmailComponent";
 
 export default {
   name: 'MainComponent',
-  components:{InboxComponent, SentComponent, TrashComponent},
+  components:{InboxComponent, SentComponent, TrashComponent, NewEmailComponent},
   data: () => ({
     menuVisible: true,
     optionMenuSelected:0,
@@ -84,6 +86,6 @@ export default {
 }
 .md-app-content{
   padding: 0;
-  min-height: 100vh;
+  min-height: calc(100vh - 64px);
 }
 </style>

@@ -16,6 +16,9 @@
               {{mail.is_selected ? 'check_box':'check_box_outline_blank'}}
             </md-icon>
           </md-button>
+
+          <md-avatar class="md-avatar-icon">A</md-avatar>
+
           <div class="md-list-item-text">
             <span>{{ mail.mail_to }}</span>
             <span>{{ mail.title }}</span>
@@ -90,5 +93,7 @@ name: "InboxComponent",
 </script>
 
 <style scoped>
-
+  .md-avatar-icon{
+    margin-right: 15px;
+  }
 </style>
