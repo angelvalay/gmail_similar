@@ -23,12 +23,15 @@
 
       <md-dialog-actions>
         <md-button class="md-primary" @click="showDialog = false">Close</md-button>
-        <md-button class="md-primary" @click="showDialog = false; showMessageSuccessful = true">Send</md-button>
+        <md-button class="md-primary" @click="addNewEmailAPI">Send</md-button>
       </md-dialog-actions>
     </md-dialog>
 
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showMessageSuccessful" md-persistent>
       <span>Email sent successful!</span>
+    </md-snackbar>
+    <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showMessageFailed" md-persistent>
+      <span>Try again!</span>
     </md-snackbar>
   </div>
 </template>
@@ -39,10 +42,33 @@ name: "NewEmailComponent",
   data:()=>({
     showDialog:false,
     showMessageSuccessful:false,
+    showMessageFailed:false,
     inputMailTo:null,
     inputTitle:'',
     inputBody:''
-  })
+  }),
+  methods:{
+    addNewEmailAPI(){
+        const data = {
+          mail_to:this.inputMailTo,
+          title:this.inputTitle,
+          body:this.inputBody
+        };
+        this.axios.post('http://localhost:8000/mails',data).then(response=>{
+          let newEmail = response.data;
+          newEmail.is_selected= false;
+          newEmail.first_letter = newEmail.mail_to.substr(0,1).toUpperCase();
+          this.showDialog = false;
+          this.showMessageSuccessful = true;
+          this.$emit('addNewEmail',newEmail);
+        }).catch(error=>{
+          console.log(error);
+          this.showMessageFailed = true;
+        }).then(()=>{
+
+        });
+    }
+  }
 }
 </script>
 

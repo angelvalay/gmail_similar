@@ -10,14 +10,13 @@ class MailsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'mail_from' => 'required',
             'mail_to' => 'required',
             'title'=>'required',
             'body'=>'required'
         ]);
 
         $email = new Email();
-        $email->mail_from = $request->get('mail_from');
+        $email->mail_from = null;
         $email->mail_to = $request->get('mail_to');
         $email->body = $request->get('body');
         $email->title = $request->get('title');

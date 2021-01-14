@@ -7,6 +7,7 @@
     </div>
     <!-- fin de los botones-->
     <md-list class="md-triple-line">
+      <md-progress-bar v-if="!this.loaded" class="md-accent" md-mode="indeterminate"></md-progress-bar>
 
       <!-- lista de correos -->
       <div v-for="(mail,index) in mails" :key="index">
@@ -17,7 +18,7 @@
             </md-icon>
           </md-button>
 
-          <md-avatar class="md-avatar-icon">A</md-avatar>
+          <md-avatar class="md-avatar-icon">{{ mail.first_letter }}</md-avatar>
 
           <div class="md-list-item-text">
             <span>{{ mail.mail_to }}</span>
@@ -41,48 +42,8 @@
 export default {
 name: "InboxComponent",
   data: () => ({
-    mails:[
-      {
-        'is_selected':false,
-        'id':1,
-        'mail_to':'test@example.com',
-        'mail_from':null,
-        'title':'this is a title',
-        'body':'this a body',
-        'is_important':true,
-        'is_deleted':false
-      },
-      {
-        'is_selected':false,
-        'id':2,
-        'mail_to':'test@example.com',
-        'mail_from':null,
-        'title':'this is a title',
-        'body':'this a body',
-        'is_important':false,
-        'is_deleted':false
-      },
-      {
-        'is_selected':false,
-        'id':3,
-        'mail_to':'test@example.com',
-        'mail_from':null,
-        'title':'this is a title',
-        'body':'this a body',
-        'is_important':false,
-        'is_deleted':false
-      },
-      {
-        'is_selected':false,
-        'id':4,
-        'mail_to':'test@example.com',
-        'mail_from':null,
-        'title':'this is a title',
-        'body':'this a body',
-        'is_important':false,
-        'is_deleted':false
-      },
-    ]
+    mails:[],
+    loaded:false
   }),
   mounted() {
     this.getAllEmailsAPI();
@@ -93,11 +54,22 @@ name: "InboxComponent",
     }
   },
   methods:{
+    setEmail(newEmail){
+      this.mails.push(newEmail);
+    },
     getAllEmailsAPI(){
+      this.loaded = false;
       this.axios.get('http://localhost:8000/mails').then((response)=>{
-        console.log(response);
-      }).catch(()=>{
-        console.log('error');
+        let data = response.data;
+        for (let i = 0; i < data.length; i++) {
+          data[i].is_selected = false;
+          data[i].first_letter = data[i].mail_to.substring(0,1).toUpperCase();
+        }
+        this.mails = data;
+      }).catch((error)=>{
+        console.log(error);
+      }).then(()=>{
+        this.loaded = true;
       })
     }
   }
@@ -106,6 +78,7 @@ name: "InboxComponent",
 
 <style scoped>
   .md-avatar-icon{
-    margin-right: 15px;
+    margin-right: 15px !important;
+
   }
 </style>

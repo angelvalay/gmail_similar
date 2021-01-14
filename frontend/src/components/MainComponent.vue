@@ -6,7 +6,12 @@
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
           <md-icon>menu</md-icon>
         </md-button>
-        <h3 class="md-title" style="flex: 1">{{ this.title }}</h3>
+        <h3 class="md-title">{{ this.title }}</h3>
+        <div class="md-toolbar-section-end" >
+          <md-button class="md-icon-button" @click="reload">
+            <md-icon>refresh</md-icon>
+          </md-button>
+        </div>
       </md-app-toolbar>
       <!-- fin de la barra superior -->
 
@@ -35,10 +40,10 @@
       <!-- fin de la barra -->
 
       <md-app-content>
-        <NewEmailComponent></NewEmailComponent>
-        <InboxComponent v-if="optionMenuSelected === 0"></InboxComponent>
-        <SentComponent v-else-if="optionMenuSelected === 1"></SentComponent>
-        <TrashComponent v-else-if="optionMenuSelected === 2"></TrashComponent>
+        <NewEmailComponent @addNewEmail="addNewEmail"></NewEmailComponent>
+        <InboxComponent v-if="optionMenuSelected === 0" ref="inboxC"></InboxComponent>
+        <SentComponent v-else-if="optionMenuSelected === 1" ref="sentC"></SentComponent>
+        <TrashComponent v-else-if="optionMenuSelected === 2" ref="trashC"></TrashComponent>
       </md-app-content>
 
     </md-app>
@@ -71,6 +76,19 @@ export default {
       }else if(option === 2){
         this.title = 'Trash';
       }
+    },
+    reload(){
+      if (this.optionMenuSelected === 0){
+        this.$refs.inboxC.getAllEmailsAPI();
+      } else if(this.optionMenuSelected === 1){
+        console.log("to do");
+      } else if(this.optionMenuSelected === 2){
+        console.log("to do");
+      }
+    },
+    addNewEmail(email){
+      if (this.optionMenuSelected === 0)
+        this.$refs.inboxC.setEmail(email);
     }
   }
 }
