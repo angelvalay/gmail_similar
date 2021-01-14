@@ -13,7 +13,7 @@
         </md-field>
         <md-field>
           <label>Title</label>
-          <md-input v-model="inputTitle"></md-input>
+          <md-input v-model="inputTitle" required></md-input>
         </md-field>
         <md-field>
           <label>Body</label>
