@@ -104,6 +104,6 @@ export default {
 }
 .md-app-content{
   padding: 0;
-  min-height: calc(100vh - 64px);
+  height: calc(100vh - 70px);
 }
 </style>

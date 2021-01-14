@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Email;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class MailsController extends Controller
 {
@@ -43,15 +44,19 @@ class MailsController extends Controller
             'is_important' => $request->get('is_important')
         ]);
 
-        return response()->json(Email::all());
+        return response(['status'=>'successful']);
     }
 
-    public function sentToTrash($id)
+    public function sentToTrash(Request $request)
     {
-        $email = Email::findOrFail($id);
-        $email->is_deleted = 1;
-        $email->save();
-        return response()->json($email);
+        $this->validate($request,[
+            'id_mails' => 'required|array|min:1',
+        ]);
+
+        Email::whereIn('id',$request->get('id_mails'))->update([
+            'is_deleted' => true
+        ]);
+        return response(['status'=>'successful']);
     }
 
     public function getTrash()

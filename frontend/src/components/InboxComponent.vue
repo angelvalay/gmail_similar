@@ -2,8 +2,8 @@
   <div>
     <!-- botones para marcar y eliminar -->
     <div v-if="this.selected">
-      <md-button class="md-primary"><md-icon>grade</md-icon> mark as important ({{this.selected}})</md-button>
-      <md-button class="md-accent"><md-icon>delete</md-icon> move to trash ({{this.selected}})</md-button>
+      <md-button class="md-primary" @click="markAsImportantAPI"><md-icon>grade</md-icon> mark as important ({{this.selected}})</md-button>
+      <md-button class="md-accent" @click="sentToTrashAPI"><md-icon>delete</md-icon> move to trash ({{this.selected}})</md-button>
     </div>
     <!-- fin de los botones-->
     <md-list class="md-triple-line">
@@ -71,6 +71,49 @@ name: "InboxComponent",
       }).then(()=>{
         this.loaded = true;
       })
+    },
+    markAsImportantAPI(){
+      let data = {
+        id_mails:[],
+        is_important:true
+      };
+      this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
+        data.id_mails.push(mail.id);
+      });
+      this.axios.put('http://localhost:8000/mails/mark',data).then(()=>{
+        // todo -> falta mostrar un mensaje de exito
+        this.mails.forEach(mail=>{
+          if (mail.is_selected)
+            mail.is_important = true;
+          mail.is_selected = false;
+        });
+      }).catch(error=>{
+        console.log(error);
+      }).then(()=>{
+
+      });
+    },
+    sentToTrashAPI(){
+      let data = {
+        id_mails:[]
+      };
+      this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
+        data.id_mails.push(mail.id);
+      });
+      this.axios.put('http://localhost:8000/mails/trash',data).then(()=>{
+        // todo -> falta mostrar un mensaje de exito
+        let lastIndexSelected = 0;
+        while(lastIndexSelected > -1){
+          lastIndexSelected = this.mails.findIndex(mail=>mail.is_selected);
+          if (lastIndexSelected === -1)
+            break;
+          this.mails.splice(lastIndexSelected,1);
+        }
+      }).catch(error=>{
+        console.log(error);
+      }).then(()=>{
+
+      });
     }
   }
 }
