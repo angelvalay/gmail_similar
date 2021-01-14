@@ -9,6 +9,8 @@
     <md-list class="md-triple-line">
       <md-progress-bar v-if="!this.loaded" class="md-accent" md-mode="indeterminate"></md-progress-bar>
 
+      <!-- todo agregar empty state-->
+
       <!-- lista de correos -->
       <div v-for="(mail,index) in mails" :key="index">
         <md-list-item>

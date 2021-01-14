@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <md-app md-waterfall md-mode="fixed">
+    <md-app >
       <!-- barra superior -->
       <md-app-toolbar class="md-primary">
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
@@ -16,9 +16,14 @@
       <!-- fin de la barra superior -->
 
       <!-- inicio de la barra lateral -->
-      <md-app-drawer md-permanent="full" :md-active.sync="menuVisible">
+      <md-app-drawer md-persistent="mini" :md-active.sync="menuVisible">
         <md-toolbar class="md-transparent" md-elevation="0">
           <span class="md-title">Menu</span>
+          <div class="md-toolbar-section-end">
+            <md-button class="md-icon-button md-dense" @click="menuVisible = !menuVisible">
+              <md-icon>keyboard_arrow_left</md-icon>
+            </md-button>
+          </div>
         </md-toolbar>
         <md-list>
           <md-list-item @click="changeOption(0)">
@@ -68,7 +73,7 @@ export default {
   methods:{
     changeOption(option){
       this.optionMenuSelected = option;
-      this.menuVisible = false;
+      // this.menuVisible = false;
       if (option === 0){
         this.title = 'Inbox';
       }else if(option === 1){
