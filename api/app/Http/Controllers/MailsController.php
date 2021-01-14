@@ -51,10 +51,11 @@ class MailsController extends Controller
     {
         $this->validate($request,[
             'id_mails' => 'required|array|min:1',
+            'is_deleted' => 'required',
         ]);
 
         Email::whereIn('id',$request->get('id_mails'))->update([
-            'is_deleted' => true
+            'is_deleted' => $request->get('is_deleted')
         ]);
         return response(['status'=>'successful']);
     }

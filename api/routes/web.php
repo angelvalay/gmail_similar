@@ -18,6 +18,8 @@ $router->group(['prefix' => 'mails'], function () use ($router) {
 
     $router->get('/trash', 'MailsController@getTrash');
 
+    $router->put('/trash', 'MailsController@sentToTrash');
+
     $router->put('/mark', 'MailsController@markAsImportant');
 
     $router->delete('/{id:[0-9]+}', 'MailsController@sentToTrash');

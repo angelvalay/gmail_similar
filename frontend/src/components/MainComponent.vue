@@ -22,7 +22,7 @@
         </md-toolbar>
         <md-list>
           <md-list-item @click="changeOption(0)">
-            <md-icon>move_to_inbox</md-icon>
+            <md-icon>inbox</md-icon>
             <span class="md-list-item-text">Inbox</span>
           </md-list-item>
 
@@ -83,7 +83,7 @@ export default {
       } else if(this.optionMenuSelected === 1){
         console.log("to do");
       } else if(this.optionMenuSelected === 2){
-        console.log("to do");
+        this.$refs.trashC.getEmailsTrashAPI();
       }
     },
     addNewEmail(email){

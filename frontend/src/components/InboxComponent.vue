@@ -95,7 +95,8 @@ name: "InboxComponent",
     },
     sentToTrashAPI(){
       let data = {
-        id_mails:[]
+        id_mails:[],
+        is_deleted:true
       };
       this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
         data.id_mails.push(mail.id);
