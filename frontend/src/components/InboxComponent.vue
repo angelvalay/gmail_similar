@@ -84,9 +84,21 @@ name: "InboxComponent",
       },
     ]
   }),
+  mounted() {
+    this.getAllEmailsAPI();
+  },
   computed:{
     selected() {
       return this.mails.filter(x=>x.is_selected).length;
+    }
+  },
+  methods:{
+    getAllEmailsAPI(){
+      this.axios.get('http://localhost:8000/mails').then((response)=>{
+        console.log(response);
+      }).catch(()=>{
+        console.log('error');
+      })
     }
   }
 }

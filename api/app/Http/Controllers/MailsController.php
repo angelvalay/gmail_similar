@@ -12,6 +12,7 @@ class MailsController extends Controller
         $this->validate($request,[
             'mail_from' => 'required',
             'mail_to' => 'required',
+            'title'=>'required',
             'body'=>'required'
         ]);
 
@@ -19,6 +20,7 @@ class MailsController extends Controller
         $email->mail_from = $request->get('mail_from');
         $email->mail_to = $request->get('mail_to');
         $email->body = $request->get('body');
+        $email->title = $request->get('title');
         $email->is_important = 0;
         $email->is_deleted = 0;
         $email->save();

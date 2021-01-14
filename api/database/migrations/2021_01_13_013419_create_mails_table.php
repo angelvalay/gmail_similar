@@ -17,6 +17,7 @@ class CreateMailsTable extends Migration
             $table->id();
             $table->string('mail_from');
             $table->string('mail_to');
+            $table->string('title');
             $table->text('body');
             $table->boolean('is_important')->default(false);
             $table->boolean('is_deleted')->default(false);
