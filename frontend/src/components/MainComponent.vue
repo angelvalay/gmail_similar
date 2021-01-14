@@ -1,6 +1,6 @@
 <template>
   <div class="page-container">
-    <md-app >
+    <md-app md-waterfall md-mode="fixed">
       <!-- barra superior -->
       <md-app-toolbar class="md-primary">
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
