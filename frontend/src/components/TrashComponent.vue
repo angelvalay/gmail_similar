@@ -25,11 +25,7 @@
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
           </div>
-          <md-button class="md-icon-button md-list-action" v-on:click="mail.is_important = !mail.is_important">
-            <md-icon v-bind:class="{'md-primary':mail.is_important}">
-              {{ mail.is_important ? 'star':'star_border' }}
-            </md-icon>
-          </md-button>
+
         </md-list-item>
         <md-divider class="md-inset"></md-divider>
       </div>

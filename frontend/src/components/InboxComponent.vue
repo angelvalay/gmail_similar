@@ -25,7 +25,7 @@
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
           </div>
-          <md-button class="md-icon-button md-list-action" v-on:click="mail.is_important = !mail.is_important">
+          <md-button class="md-icon-button md-list-action" v-on:click="markAsImportantAPI(index)">
             <md-icon v-bind:class="{'md-primary':mail.is_important}">
               {{ mail.is_important ? 'star':'star_border' }}
             </md-icon>
@@ -72,16 +72,28 @@ name: "InboxComponent",
         this.loaded = true;
       })
     },
-    markAsImportantAPI(){
+    markAsImportantAPI(index = null){
+      this.loaded = false;
       let data = {
         id_mails:[],
         is_important:true
       };
-      this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
-        data.id_mails.push(mail.id);
-      });
+      if (index == null){
+        this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
+          data.id_mails.push(mail.id);
+        });
+      }
+      else{
+        data.id_mails.push(this.mails[index].id);
+        data.is_important = !this.mails[index].is_important;
+      }
+
       this.axios.put('http://localhost:8000/mails/mark',data).then(()=>{
         // todo -> falta mostrar un mensaje de exito
+
+        if (index!=null)
+          this.mails[index].is_important = !this.mails[index].is_important;
+
         this.mails.forEach(mail=>{
           if (mail.is_selected)
             mail.is_important = true;
@@ -90,7 +102,7 @@ name: "InboxComponent",
       }).catch(error=>{
         console.log(error);
       }).then(()=>{
-
+        this.loaded = true;
       });
     },
     sentToTrashAPI(){
@@ -98,6 +110,7 @@ name: "InboxComponent",
         id_mails:[],
         is_deleted:true
       };
+      this.loaded = false;
       this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
         data.id_mails.push(mail.id);
       });
@@ -113,7 +126,7 @@ name: "InboxComponent",
       }).catch(error=>{
         console.log(error);
       }).then(()=>{
-
+        this.loaded = true;
       });
     }
   }
