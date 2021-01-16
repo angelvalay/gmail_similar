@@ -5,7 +5,7 @@
 use Laravel\Lumen\Routing\Router;
 
 $router->get('/', function () use ($router) {
-    return redirect('/mails');
+    return redirect('/mails/trash');
 });
 
 $router->group(['prefix' => 'mails'], function () use ($router) {

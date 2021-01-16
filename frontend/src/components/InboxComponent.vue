@@ -29,7 +29,7 @@
           <md-avatar class="md-avatar-icon">{{ mail.first_letter }}</md-avatar>
 
           <div class="md-list-item-text">
-            <span>{{ mail.mail_to }} <span class="md-caption">({{translateDate(mail.created_at)}})</span></span>
+            <span>{{ mail.mail_from }} <span class="md-caption">({{translateDate(mail.created_at)}})</span></span>
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
           </div>
@@ -82,7 +82,7 @@ name: "InboxComponent",
         let data = response.data;
         for (let i = 0; i < data.length; i++) {
           data[i].is_selected = false;
-          data[i].first_letter = data[i].mail_to.substring(0,1).toUpperCase();
+          data[i].first_letter = data[i].mail_from.substring(0,1).toUpperCase();
         }
         this.mails = data;
       }).catch((error)=>{

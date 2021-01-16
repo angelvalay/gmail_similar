@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-
+        Email::factory()->count(100)->create();
     }
 }
