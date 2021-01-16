@@ -62,7 +62,7 @@ class MailsController extends Controller
 
     public function getTrash()
     {
-        $mails = Email::where('is_deleted',1)->get();
+        $mails = Email::where('is_deleted',1)->orderByDesc('created_at')->get();
         return \response()->json($mails);
     }
 
@@ -76,5 +76,16 @@ class MailsController extends Controller
     {
         $mails = Email::where('is_deleted',0)->where('mail_from',null)->orderByDesc('created_at')->get();
         return \response()->json($mails);
+    }
+
+    public function delete(Request $request)
+    {
+        $this->validate($request,[
+            'id_mails' => 'required|array|min:1',
+        ]);
+
+        Email::whereIn('id',$request->get('id_mails'))->delete();
+
+        return response(['status'=>'successful']);
     }
 }

@@ -5,7 +5,7 @@
 use Laravel\Lumen\Routing\Router;
 
 $router->get('/', function () use ($router) {
-    return redirect('/mails/trash');
+    return redirect('/mails/inbox');
 });
 
 $router->group(['prefix' => 'mails'], function () use ($router) {
@@ -24,6 +24,6 @@ $router->group(['prefix' => 'mails'], function () use ($router) {
 
     $router->put('/mark', 'MailsController@markAsImportant');
 
-    $router->delete('/{id:[0-9]+}', 'MailsController@sentToTrash');
+    $router->put('/delete', 'MailsController@delete');
 
 });
