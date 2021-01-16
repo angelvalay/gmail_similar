@@ -66,9 +66,15 @@ class MailsController extends Controller
         return \response()->json($mails);
     }
 
-    public function getAll()
+    public function getInbox()
     {
-        $mails = Email::where('is_deleted',0)->get();
+        $mails = Email::where('is_deleted',0)->where('mail_to',null)->orderByDesc('created_at')->get();
+        return \response()->json($mails);
+    }
+
+    public function getSentEmails()
+    {
+        $mails = Email::where('is_deleted',0)->where('mail_from',null)->orderByDesc('created_at')->get();
         return \response()->json($mails);
     }
 }
