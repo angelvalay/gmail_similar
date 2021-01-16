@@ -19,6 +19,7 @@ class CreateMailsTable extends Migration
             $table->string('mail_to')->nullable();
             $table->string('title');
             $table->text('body');
+            $table->boolean('is_read')->default(false);
             $table->boolean('is_important')->default(false);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();

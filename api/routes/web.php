@@ -26,4 +26,6 @@ $router->group(['prefix' => 'mails'], function () use ($router) {
 
     $router->put('/delete', 'MailsController@delete');
 
+    $router->put('/read','MailsController@markAsRead');
+
 });

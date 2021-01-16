@@ -23,6 +23,7 @@ class MailsController extends Controller
         $email->title = $request->get('title');
         $email->is_important = 0;
         $email->is_deleted = 0;
+        $email->is_read = false;
         $email->save();
         return response()->json($email);
     }
@@ -42,6 +43,19 @@ class MailsController extends Controller
 
         Email::whereIn('id',$request->get('id_mails'))->update([
             'is_important' => $request->get('is_important')
+        ]);
+
+        return response(['status'=>'successful']);
+    }
+
+    public function markAsRead(Request $request)
+    {
+        $this->validate($request,[
+            'id_mails' => 'required|array|min:1',
+        ]);
+
+        Email::whereIn('id',$request->get('id_mails'))->update([
+            'is_read' => true
         ]);
 
         return response(['status'=>'successful']);

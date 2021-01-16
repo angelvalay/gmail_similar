@@ -28,7 +28,7 @@
 
           <md-avatar class="md-avatar-icon">{{ mail.first_letter }}</md-avatar>
 
-          <div class="md-list-item-text">
+          <div class="md-list-item-text" v-bind:class="{'mark_as_read':!mail.is_read}" @click="viewEmail(mail)">
             <span>{{ mail.mail_from }} <span class="md-caption">({{translateDate(mail.created_at)}})</span></span>
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
@@ -147,6 +147,9 @@ name: "InboxComponent",
         this.loaded = true;
       });
     },
+    viewEmail(email){
+      console.log(email);
+    },
     translateDate(date){
       return moment(date).fromNow();
     }
@@ -157,5 +160,8 @@ name: "InboxComponent",
 <style scoped>
   .md-avatar-icon{
     margin-right: 15px !important;
+  }
+  .mark_as_read{
+    font-weight: bold;
   }
 </style>

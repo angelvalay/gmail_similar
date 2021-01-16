@@ -27,6 +27,7 @@ class EmailFactory extends Factory
             'title'=>$this->faker->title,
             'body' => $this->faker->text,
             'is_important'=>false,
+            'is_read'=>false,
             'is_deleted' => false
         ];
     }
