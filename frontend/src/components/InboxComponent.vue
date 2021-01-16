@@ -149,6 +149,7 @@ name: "InboxComponent",
     },
     viewEmail(email){
       console.log(email);
+      //todo falta mostrar el email completo en un componente externo
     },
     translateDate(date){
       return moment(date).fromNow();
