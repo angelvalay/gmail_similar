@@ -16,7 +16,7 @@ class CreateMailsTable extends Migration
         Schema::create('mails', function (Blueprint $table) {
             $table->id();
             $table->string('mail_from')->nullable();
-            $table->string('mail_to');
+            $table->string('mail_to')->nullable();
             $table->string('title');
             $table->text('body');
             $table->boolean('is_important')->default(false);

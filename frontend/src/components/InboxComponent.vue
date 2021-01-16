@@ -73,9 +73,6 @@ name: "InboxComponent",
     }
   },
   methods:{
-    setEmail(newEmail){
-      this.mails.push(newEmail);
-    },
     getAllEmailsAPI(){
       this.loaded = false;
       this.axios.get('http://localhost:8000/mails/inbox').then((response)=>{

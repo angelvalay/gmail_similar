@@ -86,14 +86,14 @@ export default {
       if (this.optionMenuSelected === 0){
         this.$refs.inboxC.getAllEmailsAPI();
       } else if(this.optionMenuSelected === 1){
-        console.log("to do");
+        this.$refs.sentC.getAllEmailsAPI();
       } else if(this.optionMenuSelected === 2){
         this.$refs.trashC.getEmailsTrashAPI();
       }
     },
     addNewEmail(email){
       if (this.optionMenuSelected === 0)
-        this.$refs.inboxC.setEmail(email);
+        this.$refs.sentC.setEmail(email);
     }
   }
 }

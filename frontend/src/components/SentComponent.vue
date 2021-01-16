@@ -64,17 +64,29 @@ export default {
     showTrashSuccessful:false,
     markAsImportant:false,
   }),
+  computed:{
+    selected() {
+      return this.mails.filter(x=>x.is_selected).length;
+    }
+  },
   mounted() {
     this.getAllEmailsAPI();
   },
   methods:{
+    setEmail(newEmail){
+      this.mails.push(this.addExtraProperties(newEmail));
+    },
+    addExtraProperties(mail){
+      mail.is_selected = false;
+      mail.first_letter = mail.mail_to.substring(0,1).toUpperCase();
+      return mail;
+    },
     getAllEmailsAPI(){
       this.loaded = false;
       this.axios.get('http://localhost:8000/mails/sent').then((response)=>{
         let data = response.data;
         for (let i = 0; i < data.length; i++) {
-          data[i].is_selected = false;
-          data[i].first_letter = data[i].mail_to.substring(0,1).toUpperCase();
+          data[i] = this.addExtraProperties(data[i]);
         }
         this.mails = data;
       }).catch((error)=>{

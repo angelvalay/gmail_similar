@@ -2,7 +2,7 @@
   <div>
     <!-- botones para marcar y eliminar -->
     <div v-if="this.selected">
-      <md-button class="md-primary" @click="sendToInboxAPI"><md-icon>move_to_inbox</md-icon> move to inbox ({{this.selected}})</md-button>
+      <md-button class="md-primary" @click="sendToInboxAPI"><md-icon>restore_from_trash</md-icon> restore mail(s) ({{this.selected}})</md-button>
       <!-- todo falta agregar un boton para eliminar definitivamente los correos-->
     </div>
     <!-- fin de los botones-->
@@ -40,7 +40,7 @@
       <!-- fin de los correos-->
     </md-list>
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showSentInboxSuccessful" md-persistent>
-      <span>Email(s) sent to trash!</span>
+      <span>Email(s) restored!</span>
     </md-snackbar>
   </div>
 </template>
