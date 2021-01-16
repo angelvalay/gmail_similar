@@ -9,6 +9,14 @@
     <md-list class="md-triple-line">
       <md-progress-bar v-if="!this.loaded" class="md-accent" md-mode="indeterminate"></md-progress-bar>
 
+      <md-empty-state
+          v-if="!mails.length && this.loaded"
+          class="md-primary"
+          md-icon="delete_outline"
+          md-label="Nothing in Trash"
+          md-description="The trash is empty.">
+      </md-empty-state>
+
       <!-- lista de correos -->
       <div v-for="(mail,index) in mails" :key="index">
         <md-list-item>
@@ -21,7 +29,7 @@
           <md-avatar class="md-avatar-icon">{{ mail.first_letter }}</md-avatar>
 
           <div class="md-list-item-text">
-            <span>{{ mail.mail_to }}</span>
+            <span>{{ mail.mail_from ? mail.mail_to: 'me'}} <span class="md-caption">({{translateDate(mail.created_at)}})</span></span>
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
           </div>
@@ -31,15 +39,20 @@
       </div>
       <!-- fin de los correos-->
     </md-list>
+    <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showSentInboxSuccessful" md-persistent>
+      <span>Email(s) sent to trash!</span>
+    </md-snackbar>
   </div>
 </template>
 
 <script>
+import moment from 'moment';
 export default {
 name: "TrashComponent",
   data: () => ({
     mails:[],
-    loaded:false
+    loaded:false,
+    showSentInboxSuccessful:false,
   }),
   computed:{
     selected() {
@@ -74,7 +87,7 @@ name: "TrashComponent",
         data.id_mails.push(mail.id);
       });
       this.axios.put('http://localhost:8000/mails/trash',data).then(()=>{
-        // todo -> falta mostrar un mensaje de exito
+        this.showSentInboxSuccessful = true;
         let lastIndexSelected = 0;
         while(lastIndexSelected > -1){
           lastIndexSelected = this.mails.findIndex(mail=>mail.is_selected);
@@ -87,6 +100,9 @@ name: "TrashComponent",
       }).then(()=>{
 
       });
+    },
+    translateDate(date){
+      return moment(date).fromNow();
     }
   }
 }

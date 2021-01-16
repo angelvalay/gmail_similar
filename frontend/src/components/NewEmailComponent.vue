@@ -1,10 +1,11 @@
 <template>
   <div>
     <md-button @click="showDialog = true" class="md-fab md-plain md-fixed md-fab-bottom-right">
-      <md-icon>edit</md-icon>
+      <md-icon>add</md-icon>
+      <md-tooltip md-direction="left">New email</md-tooltip>
     </md-button>
     <md-dialog :md-active.sync="showDialog">
-      <md-dialog-title>New email</md-dialog-title>
+      <md-dialog-title>Send new email</md-dialog-title>
 
       <md-dialog-content>
         <md-field>
