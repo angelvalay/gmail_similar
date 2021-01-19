@@ -6,8 +6,8 @@
       <md-empty-state
           v-if="!mails.length && loaded"
           class="md-primary"
-          md-icon="inbox"
-          md-label="Nothing in Inbox"
+          :md-icon="icon"
+          :md-label="'Nothing in '+label"
           md-description="Wait a moment and try again later.">
       </md-empty-state>
 
@@ -37,9 +37,6 @@
         </md-list-item>
         <md-divider class="md-inset"></md-divider>
       </div>
-
-
-
       <!-- fin de los correos-->
     </md-list>
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showMarkedSuccessful" md-persistent>
@@ -57,7 +54,7 @@
 <script>
 export default {
 name: "InboxComponent",
-  props:['mails','selected', 'loaded'],
+  props:['mails','selected', 'loaded', 'icon','label'],
   data: () => ({
     showUnmarkedSuccessful:false,
     showMarkedSuccessful:false,

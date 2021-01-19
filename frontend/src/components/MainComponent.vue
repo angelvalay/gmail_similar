@@ -8,16 +8,21 @@
         </md-button>
         <h3 class="md-title">{{ this.title }}</h3>
         <!--Opciones de seleccion-->
-        <div class="md-toolbar-section-end" >
+        <div class="md-toolbar-section-end" v-if="optionMenuSelected !== 3">
           <md-button v-if="!selected" class="md-icon-button" @click="reload">
             <md-icon>refresh</md-icon>
           </md-button>
           <div v-else>
-            <md-button @click="markAsImportantAPI(null, true)" v-if="optionMenuSelected === 0" class="md-icon-button" >
+            <md-button @click="markAsImportantAPI(null, true)"
+                       v-if="optionMenuSelected === 0 || optionMenuSelected === 1" class="md-icon-button" >
               <md-icon>grade</md-icon>
               <md-tooltip md-delay="300">Mark as important</md-tooltip>
             </md-button>
-            <md-button @click="sentToTrashAPI" v-if="optionMenuSelected === 0" class="md-icon-button" >
+            <md-button @click="markAsReadAPI(null)" class="md-icon-button">
+              <md-icon>drafts</md-icon>
+              <md-tooltip >Mark as read</md-tooltip>
+            </md-button>
+            <md-button @click="sentToTrashAPI" v-if="optionMenuSelected === 0 || optionMenuSelected === 1" class="md-icon-button" >
               <md-icon>delete</md-icon>
               <md-tooltip >To trash</md-tooltip>
             </md-button>
@@ -25,13 +30,9 @@
               <md-icon>restore_from_trash</md-icon>
               <md-tooltip >Restore</md-tooltip>
             </md-button>
-            <md-button @click="deleteMailsSelectedAPI" v-if="optionMenuSelected === 2" class="md-icon-button" >
-              <md-icon>delete_forever</md-icon>
+            <md-button class="md-dense md-primary" @click="deleteMailsSelectedAPI" v-if="optionMenuSelected === 2" >
+              Delete forever
               <md-tooltip >Delete</md-tooltip>
-            </md-button>
-            <md-button @click="markAsReadAPI(null)" class="md-icon-button">
-              <md-icon>mark_email_read</md-icon>
-              <md-tooltip >Mark as read</md-tooltip>
             </md-button>
           </div>
 
@@ -47,12 +48,11 @@
         </md-toolbar>
         <md-list>
           <md-list-item>
-            <md-button @click="showDialogNewEmail" class="md-dense md-raised md-primary"> <md-icon>add</md-icon> New email</md-button>
+            <md-button @click="showDialogNewEmail" class="button-primary md-dense md-raised md-primary"> <md-icon>add</md-icon> New email</md-button>
           </md-list-item>
           <md-list-item @click="changeOption(0)">
             <md-icon>inbox</md-icon>
             <span class="md-list-item-text">Inbox</span>
-            <md-badge v-if="inbox.filter(x=>!x.is_read).length" class="md-square md-primary"  :md-content="'New '+inbox.filter(x=>!x.is_read).length" />
           </md-list-item>
 
           <md-list-item @click="changeOption(1)">
@@ -77,18 +77,10 @@
         ></NewEmailComponent>
 
         <InboxComponent
-            :loaded="loaded" :mails="inbox" :selected="selected"
+            :loaded="loaded" :label="label" :icon="icon" v-show="optionMenuSelected !== 3" :mails="filtered" :selected="selected"
             @view="viewEmail" @markAsRead="markAsReadAPI" @markImportant="markAsImportantAPI"
-            v-show="optionMenuSelected === 0"
             ref="inboxC"></InboxComponent>
-        <SentComponent
-            :loaded="loaded" :mails="sent" :selected="selected"
-            v-show="optionMenuSelected === 1"
-            ref="sentC"></SentComponent>
-        <TrashComponent
-            :loaded="loaded" :mails="trash" :selected="selected"
-            v-show="optionMenuSelected === 2"
-            ref="trashC"></TrashComponent>
+
         <ViewEmailComponent
             v-show="optionMenuSelected === 3"
             ref="viewC"></ViewEmailComponent>
@@ -102,35 +94,37 @@
 
 <script>
 import InboxComponent from "@/components/InboxComponent.vue";
-import SentComponent from "@/components/SentComponent";
-import TrashComponent from "@/components/TrashComponent.vue";
 import NewEmailComponent from "@/components/NewEmailComponent";
 import ViewEmailComponent from "@/components/ViewEmailComponent";
 import moment from "moment";
 
 export default {
   name: 'MainComponent',
-  components:{ViewEmailComponent, InboxComponent, SentComponent, TrashComponent, NewEmailComponent},
+  components:{ViewEmailComponent, InboxComponent,  NewEmailComponent},
   data: () => ({
     menuVisible: true,
     optionMenuSelected:0,
     title: 'Inbox',
+    icon:'inbox',
+    label:'Inbox',
     mails:[],
     loaded:false,
     showDialog:false,
   }),
   computed:{
+    filtered(){
+      if (this.optionMenuSelected === 0){
+        return this.mails.filter(x=>x.mail_to === null && !x.is_deleted)
+      }else if(this.optionMenuSelected === 1){
+        return this.mails.filter(x=>x.mail_to !== null && !x.is_deleted);
+      } else if(this.optionMenuSelected === 2){
+        return this.mails.filter(x => x.is_deleted);
+      }else{
+        return this.mails;
+      }
+    },
     selected() {
       return this.mails.filter(x=>x.is_selected).length;
-    },
-    inbox(){
-      return this.mails.filter(x=>x.mail_to === null && !x.is_deleted);
-    },
-    sent(){
-      return this.mails.filter(x=>x.mail_to !== null && !x.is_deleted);
-    },
-    trash(){
-      return this.mails.filter(x => x.is_deleted);
     },
   },
   mounted() {
@@ -326,13 +320,17 @@ export default {
 
 
     changeOption(option){
+      this.clearSelect();
       this.optionMenuSelected = option;
       if (option === 0){
-        this.title = 'Inbox';
+        this.title = this.label = 'Inbox';
+        this.icon = 'inbox';
       }else if(option === 1){
-        this.title = 'Sent';
+        this.title = this.label = 'Sent';
+        this.icon = 'send';
       }else if(option === 2){
-        this.title = 'Trash';
+        this.title = this.label = 'Trash';
+        this.icon = 'delete_outline';
       }
     },
     reload(){
@@ -369,7 +367,7 @@ export default {
   padding: 0;
   height: calc(100vh - 70px);
 }
-.md-button.md-dense{
+.button-primary{
   padding: 10px !important;
   width: 100%;
 }
