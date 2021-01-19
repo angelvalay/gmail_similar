@@ -51,7 +51,7 @@ name: "NewEmailComponent",
           title:this.inputTitle,
           body:this.inputBody
         };
-        this.axios.post('http://localhost:8000/mails',data).then(response=>{
+        this.axios.post('http://'+location.hostname+':8000/mails',data).then(response=>{
           let newEmail = response.data;
           newEmail.is_selected= false;
           newEmail.first_letter = newEmail.mail_to.substr(0,1).toUpperCase();

@@ -158,7 +158,7 @@ export default {
 
     getAllEmailsAPI(){
       this.loaded = false;
-      this.axios.get('http://localhost:8000/mails').then((response)=>{
+      this.axios.get('http://'+location.hostname+':8000/mails').then((response)=>{
         let data = response.data;
         for (let i = 0; i < data.length; i++) {
           this.addExtraProperties(data[i]);
@@ -191,7 +191,7 @@ export default {
       else
         this.$refs.inboxC.onShowMarkedSuccessful(false);
 
-      this.axios.put('http://localhost:8000/mails/mark',data).then(()=>{
+      this.axios.put('http://'+location.hostname+':8000/mails/mark',data).then(()=>{
 
         if (!data.is_important)
           this.$refs.inboxC.onShowUnmarkedSuccessful(true);
@@ -223,7 +223,7 @@ export default {
       this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
         data.id_mails.push(mail.id);
       });
-      this.axios.put('http://localhost:8000/mails/trash',data).then(()=>{
+      this.axios.put('http://'+location.hostname+':8000/mails/trash',data).then(()=>{
         this.$refs.inboxC.onShowTrashSuccessful(true);
         let lastIndexSelected = 0;
         while(lastIndexSelected > -1){
@@ -251,7 +251,7 @@ export default {
       else{
         data.id_mails.push(id);
       }
-      this.axios.put('http://localhost:8000/mails/read',data).then(()=>{
+      this.axios.put('http://'+location.hostname+':8000/mails/read',data).then(()=>{
         //this.showMarkedSuccessful = true;
 
         if (id != null){
@@ -277,7 +277,7 @@ export default {
       this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
         data.id_mails.push(mail.id);
       });
-      this.axios.put('http://localhost:8000/mails/delete',data).then(()=>{
+      this.axios.put('http://'+location.hostname+':8000/mails/delete',data).then(()=>{
 
         this.showSuccessfulMessageDelete = true;
 
@@ -302,7 +302,7 @@ export default {
       this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
         data.id_mails.push(mail.id);
       });
-      this.axios.put('http://localhost:8000/mails/trash',data).then(()=>{
+      this.axios.put('http://'+location.hostname+':8000/mails/trash',data).then(()=>{
         this.showSentInboxSuccessful = true;
         let lastIndexSelected = 0;
         while(lastIndexSelected > -1){
