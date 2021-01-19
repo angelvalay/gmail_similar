@@ -24,8 +24,8 @@ class EmailFactory extends Factory
         return [
             'mail_from' => $this->faker->unique()->safeEmail,
             'mail_to' => null,
-            'title'=>$this->faker->title,
-            'body' => $this->faker->text,
+            'title'=>$this->faker->realText(50),
+            'body' => $this->faker->realText(1000),
             'is_important'=>false,
             'is_read'=>false,
             'is_deleted' => false

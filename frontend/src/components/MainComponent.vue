@@ -1,52 +1,58 @@
 <template>
-  <div class="page-container">
-    <md-app md-waterfall md-mode="fixed">
+  <div class="page-container md-layout-row">
+    <md-app md-mode="fixed">
       <!-- barra superior -->
-      <md-app-toolbar class="md-primary">
+      <md-app-toolbar class="md-primary" >
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
           <md-icon>menu</md-icon>
         </md-button>
         <h3 class="md-title">{{ this.title }}</h3>
+        <!--Opciones de seleccion-->
         <div class="md-toolbar-section-end" >
           <md-button v-if="!selected" class="md-icon-button" @click="reload">
             <md-icon>refresh</md-icon>
           </md-button>
           <div v-else>
-            <md-button v-if="optionMenuSelected === 0" class="md-icon-button" >
+            <md-button @click="markAsImportantAPI(null, true)" v-if="optionMenuSelected === 0" class="md-icon-button" >
               <md-icon>grade</md-icon>
+              <md-tooltip md-delay="300">Mark as important</md-tooltip>
             </md-button>
-            <md-button v-if="optionMenuSelected === 0" class="md-icon-button" >
+            <md-button @click="sentToTrashAPI" v-if="optionMenuSelected === 0" class="md-icon-button" >
               <md-icon>delete</md-icon>
+              <md-tooltip >To trash</md-tooltip>
             </md-button>
-            <md-button v-if="optionMenuSelected === 2" class="md-icon-button" >
+            <md-button @click="sendToInboxAPI" v-if="optionMenuSelected === 2" class="md-icon-button" >
               <md-icon>restore_from_trash</md-icon>
+              <md-tooltip >Restore</md-tooltip>
             </md-button>
-            <md-button v-if="optionMenuSelected === 2" class="md-icon-button" >
+            <md-button @click="deleteMailsSelectedAPI" v-if="optionMenuSelected === 2" class="md-icon-button" >
               <md-icon>delete_forever</md-icon>
+              <md-tooltip >Delete</md-tooltip>
             </md-button>
-            <md-button class="md-icon-button">
+            <md-button @click="markAsReadAPI(null)" class="md-icon-button">
               <md-icon>mark_email_read</md-icon>
+              <md-tooltip >Mark as read</md-tooltip>
             </md-button>
           </div>
 
         </div>
+        <!--Fin de las opciones-->
       </md-app-toolbar>
       <!-- fin de la barra superior -->
 
       <!-- inicio de la barra lateral -->
-      <md-app-drawer md-persistent="mini" :md-active.sync="menuVisible">
+      <md-app-drawer md-permanent="full" :md-active.sync="menuVisible">
         <md-toolbar class="md-transparent" md-elevation="0">
           <span class="md-title">Menu</span>
-          <div class="md-toolbar-section-end">
-            <md-button class="md-icon-button md-dense" @click="menuVisible = !menuVisible">
-              <md-icon>keyboard_arrow_left</md-icon>
-            </md-button>
-          </div>
         </md-toolbar>
         <md-list>
+          <md-list-item>
+            <md-button @click="showDialogNewEmail" class="md-dense md-raised md-primary"> <md-icon>add</md-icon> New email</md-button>
+          </md-list-item>
           <md-list-item @click="changeOption(0)">
             <md-icon>inbox</md-icon>
             <span class="md-list-item-text">Inbox</span>
+            <md-badge v-if="inbox.filter(x=>!x.is_read).length" class="md-square md-primary"  :md-content="'New '+inbox.filter(x=>!x.is_read).length" />
           </md-list-item>
 
           <md-list-item @click="changeOption(1)">
@@ -57,18 +63,37 @@
           <md-list-item @click="changeOption(2)">
             <md-icon>delete</md-icon>
             <span class="md-list-item-text">Trash</span>
+
           </md-list-item>
         </md-list>
       </md-app-drawer>
       <!-- fin de la barra -->
 
+
       <md-app-content>
-        <NewEmailComponent @addNewEmail="addNewEmail"></NewEmailComponent>
-        <InboxComponent :loaded="loaded" :mails="inbox" :selected="selected" @view="viewEmail" v-show="optionMenuSelected === 0" ref="inboxC"></InboxComponent>
-        <SentComponent :loaded="loaded" :mails="sent" :selected="selected" v-show="optionMenuSelected === 1" ref="sentC"></SentComponent>
-        <TrashComponent :loaded="loaded" :mails="trash" :selected="selected" v-show="optionMenuSelected === 2" ref="trashC"></TrashComponent>
-        <ViewEmailComponent v-show="optionMenuSelected === 3" ref="viewC"></ViewEmailComponent>
+        <NewEmailComponent
+            :showDialog="showDialog"
+            @hide="hideDialogNewEmail" @addNewEmail="addNewEmail"
+        ></NewEmailComponent>
+
+        <InboxComponent
+            :loaded="loaded" :mails="inbox" :selected="selected"
+            @view="viewEmail" @markAsRead="markAsReadAPI" @markImportant="markAsImportantAPI"
+            v-show="optionMenuSelected === 0"
+            ref="inboxC"></InboxComponent>
+        <SentComponent
+            :loaded="loaded" :mails="sent" :selected="selected"
+            v-show="optionMenuSelected === 1"
+            ref="sentC"></SentComponent>
+        <TrashComponent
+            :loaded="loaded" :mails="trash" :selected="selected"
+            v-show="optionMenuSelected === 2"
+            ref="trashC"></TrashComponent>
+        <ViewEmailComponent
+            v-show="optionMenuSelected === 3"
+            ref="viewC"></ViewEmailComponent>
       </md-app-content>
+
 
     </md-app>
 
@@ -91,7 +116,8 @@ export default {
     optionMenuSelected:0,
     title: 'Inbox',
     mails:[],
-    loaded:false
+    loaded:false,
+    showDialog:false,
   }),
   computed:{
     selected() {
@@ -111,8 +137,23 @@ export default {
     this.getAllEmailsAPI();
   },
   methods:{
+    clearSelect(){
+      this.mails.forEach(mail=>{
+        mail.is_selected = false;
+      });
+    },
+
     getMail(mail){
-      return mail.mail_from == null ? mail.mail_to : mail.mail_from;
+      if (mail.mail_from){
+        if (mail.mail_to){
+          return mail.mail_to;
+        }
+        return mail.mail_from;
+      }else{
+        if (mail.mail_to)
+          return mail.mail_to;
+        return 'Me';
+      }
     },
 
     addExtraProperties(mail){
@@ -135,35 +176,44 @@ export default {
         this.loaded = true;
       })
     },
-    markAsImportantAPI(index = null){
+    markAsImportantAPI(id, newStatus){
       this.loaded = false;
       let data = {
         id_mails:[],
-        is_important:true
+        is_important: true
       };
-      if (index == null){
+      if (id == null){
         this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
           data.id_mails.push(mail.id);
         });
       }
       else{
-        data.id_mails.push(this.mails[index].id);
-        data.is_important = !this.mails[index].is_important;
+        data.id_mails.push(id);
+        data.is_important = newStatus;
       }
 
-      this.markAsImportant = data.is_important;
+      if (!data.is_important)
+        this.$refs.inboxC.onShowUnmarkedSuccessful(false);
+      else
+        this.$refs.inboxC.onShowMarkedSuccessful(false);
 
       this.axios.put('http://localhost:8000/mails/mark',data).then(()=>{
-        this.showMarkedSuccessful = true;
 
-        if (index!=null)
-          this.mails[index].is_important = !this.mails[index].is_important;
+        if (!data.is_important)
+          this.$refs.inboxC.onShowUnmarkedSuccessful(true);
+        else
+          this.$refs.inboxC.onShowMarkedSuccessful(true);
+
+        if (id!=null){
+          let indexMail = this.mails.findIndex(m=> m.id === id);
+          this.mails[indexMail].is_important = newStatus;
+        }
 
         this.mails.forEach(mail=>{
           if (mail.is_selected)
             mail.is_important = true;
-          mail.is_selected = false;
         });
+        this.clearSelect();
       }).catch(error=>{
         console.log(error);
       }).then(()=>{
@@ -180,7 +230,7 @@ export default {
         data.id_mails.push(mail.id);
       });
       this.axios.put('http://localhost:8000/mails/trash',data).then(()=>{
-        this.showTrashSuccessful = true;
+        this.$refs.inboxC.onShowTrashSuccessful(true);
         let lastIndexSelected = 0;
         while(lastIndexSelected > -1){
           lastIndexSelected = this.mails.findIndex(mail=>mail.is_selected);
@@ -194,32 +244,32 @@ export default {
         this.loaded = true;
       });
     },
-    markAsReadAPI(index = null){
+    markAsReadAPI(id = null){
       this.loaded = false;
       let data = {
         id_mails:[]
       };
-      if (index == null){
+      if (id == null){
         this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
           data.id_mails.push(mail.id);
         });
       }
       else{
-        data.id_mails.push(this.mails[index].id);
+        data.id_mails.push(id);
       }
-
-
       this.axios.put('http://localhost:8000/mails/read',data).then(()=>{
         //this.showMarkedSuccessful = true;
 
-        if (index!=null)
-          this.mails[index].is_read = !this.mails[index].is_read;
+        if (id != null){
+          let indexMail = this.mails.findIndex(m=> m.id === id);
+          this.mails[indexMail].is_read = !this.mails[indexMail].is_read;
+        }
 
         this.mails.forEach(mail=>{
           if (mail.is_selected)
             mail.is_read = true;
-          mail.is_selected = false;
         });
+        this.clearSelect();
       }).catch(error=>{
         console.log(error);
       }).then(()=>{
@@ -288,9 +338,16 @@ export default {
     reload(){
       this.getAllEmailsAPI();
     },
+
+    showDialogNewEmail(){
+      this.showDialog = true;
+    },
+    hideDialogNewEmail() {
+      this.showDialog = false;
+    },
     addNewEmail(email){
-      if (this.optionMenuSelected === 0)
-        this.$refs.sentC.setEmail(email);
+      this.addExtraProperties(email);
+      this.mails.push(email);
     },
     viewEmail(email){
       this.optionMenuSelected = 3;
@@ -311,5 +368,9 @@ export default {
 .md-app-content{
   padding: 0;
   height: calc(100vh - 70px);
+}
+.md-button.md-dense{
+  padding: 10px !important;
+  width: 100%;
 }
 </style>

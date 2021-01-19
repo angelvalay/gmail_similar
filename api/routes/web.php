@@ -10,6 +10,8 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'mails'], function () use ($router) {
 
+    $router->get('/', 'MailsController@getAll');
+
     $router->get('/inbox', 'MailsController@getInbox');
 
     $router->get('/sent','MailsController@getSentEmails');

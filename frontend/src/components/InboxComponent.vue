@@ -11,6 +11,7 @@
           md-description="Wait a moment and try again later.">
       </md-empty-state>
 
+
       <!-- lista de correos -->
       <div v-for="(mail,index) in mails" :key="index">
         <md-list-item>
@@ -22,12 +23,12 @@
 
           <md-avatar class="md-avatar-icon">{{ mail.first_letter }}</md-avatar>
 
-          <div class="md-list-item-text" v-bind:class="{'mark_as_read':!mail.is_read}" @click="viewEmail(index, mail)">
-            <span>{{ mail.mail_from }} <span class="md-caption">({{mail.created_from_now}})</span></span>
+          <div class="md-list-item-text" v-bind:class="{'mark_as_read':!mail.is_read}" @click="viewEmail(mail)">
+            <span>{{ mail.mail_to ? 'me' : mail.mail_from ? mail.mail_from : 'me' }} <span class="md-caption">({{mail.created_from_now}})</span></span>
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
           </div>
-          <md-button class="md-icon-button md-list-action" v-on:click="markAsImportantAPI(index)">
+          <md-button class="md-icon-button md-list-action" v-on:click="onMarkAsImportant(mail.id, !mail.is_important)">
             <md-icon v-bind:class="{'md-primary':mail.is_important}">
               {{ mail.is_important ? 'star':'star_border' }}
             </md-icon>
@@ -36,10 +37,16 @@
         </md-list-item>
         <md-divider class="md-inset"></md-divider>
       </div>
+
+
+
       <!-- fin de los correos-->
     </md-list>
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showMarkedSuccessful" md-persistent>
-      <span>Email(s) {{markAsImportant? 'marked':'unmarked'}} as important!</span>
+      <span>Email(s) marked as important!</span>
+    </md-snackbar>
+    <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showUnmarkedSuccessful" md-persistent>
+      <span>Email(s) unmarked as important!</span>
     </md-snackbar>
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showTrashSuccessful" md-persistent>
       <span>Email(s) sent to trash!</span>
@@ -52,25 +59,35 @@ export default {
 name: "InboxComponent",
   props:['mails','selected', 'loaded'],
   data: () => ({
+    showUnmarkedSuccessful:false,
     showMarkedSuccessful:false,
     showTrashSuccessful:false,
     markAsImportant:false,
   }),
   methods:{
-    markAsImportantAPI(index = null){
-      console.log(index);
+    onShowUnmarkedSuccessful(newStatus){
+      this.showUnmarkedSuccessful = newStatus;
     },
 
-    markAsReadAPI(index = null){
-      console.log(index);
+    onShowMarkedSuccessful(newStatus){
+      this.showMarkedSuccessful = newStatus;
     },
 
-    sentToTrashAPI(){
-      console.log('sent to trash');
+    onShowTrashSuccessful(newStatus){
+      this.showTrashSuccessful = newStatus;
     },
 
-    viewEmail(index, email){
-      this.markAsReadAPI(index);
+    onMarkAsImportant(id, status){
+      this.$emit('markImportant',id, status);
+    },
+
+    onMarkAsRead(id = null){
+      this.$emit('markAsRead',id);
+    },
+
+    viewEmail(email){
+      if (!email.is_read)
+        this.onMarkAsRead(email.id);
       this.$emit('view',email);
     },
   }

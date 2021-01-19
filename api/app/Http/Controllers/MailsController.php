@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Email;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class MailsController extends Controller
 {
@@ -83,6 +84,12 @@ class MailsController extends Controller
     public function getInbox()
     {
         $mails = Email::where('is_deleted',0)->where('mail_to',null)->orderByDesc('created_at')->get();
+        return \response()->json($mails);
+    }
+
+    public function getAll()
+    {
+        $mails = DB::table('mails')->get();
         return \response()->json($mails);
     }
 

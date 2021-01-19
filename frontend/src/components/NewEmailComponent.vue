@@ -1,9 +1,5 @@
 <template>
   <div>
-    <md-button @click="showDialog = true" class="md-fab md-plain md-fixed md-fab-bottom-right">
-      <md-icon>add</md-icon>
-      <md-tooltip md-direction="left">New email</md-tooltip>
-    </md-button>
     <md-dialog :md-active.sync="showDialog">
       <md-dialog-title>Send new email</md-dialog-title>
 
@@ -23,7 +19,7 @@
       </md-dialog-content>
 
       <md-dialog-actions>
-        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+        <md-button class="md-primary" @click="hideDialog">Close</md-button>
         <md-button class="md-primary" @click="addNewEmailAPI">Send</md-button>
       </md-dialog-actions>
     </md-dialog>
@@ -40,8 +36,8 @@
 <script>
 export default {
 name: "NewEmailComponent",
+  props:['showDialog'],
   data:()=>({
-    showDialog:false,
     showMessageSuccessful:false,
     showMessageFailed:false,
     inputMailTo:null,
@@ -59,7 +55,7 @@ name: "NewEmailComponent",
           let newEmail = response.data;
           newEmail.is_selected= false;
           newEmail.first_letter = newEmail.mail_to.substr(0,1).toUpperCase();
-          this.showDialog = false;
+          this.hideDialog();
           this.showMessageSuccessful = true;
           this.$emit('addNewEmail',newEmail);
         }).catch(error=>{
@@ -68,6 +64,9 @@ name: "NewEmailComponent",
         }).then(()=>{
 
         });
+    },
+    hideDialog(){
+      this.$emit('hide');
     }
   }
 }

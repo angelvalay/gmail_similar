@@ -23,7 +23,7 @@
           <md-avatar class="md-avatar-icon">{{ mail.first_letter }}</md-avatar>
 
           <div class="md-list-item-text">
-            <span>{{ mail.mail_to ? 'me' : mail.mail_from }} <span class="md-caption">({{mail.created_from_now}})</span></span>
+            <span>{{ mail.mail_to ? 'me' : mail.mail_from ? mail.mail_from : 'me' }} <span class="md-caption">({{mail.created_from_now}})</span></span>
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
           </div>
