@@ -46,9 +46,11 @@
 
       <md-app-content>
         <NewEmailComponent @addNewEmail="addNewEmail"></NewEmailComponent>
-        <InboxComponent v-if="optionMenuSelected === 0" ref="inboxC"></InboxComponent>
-        <SentComponent v-else-if="optionMenuSelected === 1" ref="sentC"></SentComponent>
-        <TrashComponent v-else-if="optionMenuSelected === 2" ref="trashC"></TrashComponent>
+        <InboxComponent @view="viewEmail" v-show="optionMenuSelected === 0" ref="inboxC"></InboxComponent>
+        <SentComponent v-show="optionMenuSelected === 1" ref="sentC"></SentComponent>
+        <TrashComponent v-show="optionMenuSelected === 2" ref="trashC"></TrashComponent>
+
+        <ViewEmailComponent v-show="optionMenuSelected === 3" ref="viewC"></ViewEmailComponent>
       </md-app-content>
 
     </md-app>
@@ -61,10 +63,11 @@ import InboxComponent from "@/components/InboxComponent.vue";
 import SentComponent from "@/components/SentComponent";
 import TrashComponent from "@/components/TrashComponent.vue";
 import NewEmailComponent from "@/components/NewEmailComponent";
+import ViewEmailComponent from "@/components/ViewEmailComponent";
 
 export default {
   name: 'MainComponent',
-  components:{InboxComponent, SentComponent, TrashComponent, NewEmailComponent},
+  components:{ViewEmailComponent, InboxComponent, SentComponent, TrashComponent, NewEmailComponent},
   data: () => ({
     menuVisible: true,
     optionMenuSelected:0,
@@ -73,7 +76,6 @@ export default {
   methods:{
     changeOption(option){
       this.optionMenuSelected = option;
-      // this.menuVisible = false;
       if (option === 0){
         this.title = 'Inbox';
       }else if(option === 1){
@@ -94,6 +96,10 @@ export default {
     addNewEmail(email){
       if (this.optionMenuSelected === 0)
         this.$refs.sentC.setEmail(email);
+    },
+    viewEmail(email){
+      this.optionMenuSelected = 3;
+      this.$refs.viewC.viewEmail(email);
     }
   }
 }

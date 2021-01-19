@@ -2,6 +2,7 @@
   <div>
     <!-- botones para marcar y eliminar -->
     <div v-if="this.selected">
+      <md-button @click="markAsReadAPI(null)"><md-icon>mark_email_read</md-icon> mark as read ({{this.selected}})</md-button>
       <md-button class="md-primary" @click="markAsImportantAPI(null)"><md-icon>grade</md-icon> mark as important ({{this.selected}})</md-button>
       <md-button class="md-accent" @click="sentToTrashAPI"><md-icon>delete</md-icon> move to trash ({{this.selected}})</md-button>
     </div>
@@ -28,7 +29,7 @@
 
           <md-avatar class="md-avatar-icon">{{ mail.first_letter }}</md-avatar>
 
-          <div class="md-list-item-text" v-bind:class="{'mark_as_read':!mail.is_read}" @click="viewEmail(mail)">
+          <div class="md-list-item-text" v-bind:class="{'mark_as_read':!mail.is_read}" @click="viewEmail(index, mail)">
             <span>{{ mail.mail_from }} <span class="md-caption">({{translateDate(mail.created_at)}})</span></span>
             <span>{{ mail.title }}</span>
             <p>{{ mail.body }}</p>
@@ -88,6 +89,7 @@ name: "InboxComponent",
         this.loaded = true;
       })
     },
+
     markAsImportantAPI(index = null){
       this.loaded = false;
       let data = {
@@ -123,6 +125,40 @@ name: "InboxComponent",
         this.loaded = true;
       });
     },
+
+    markAsReadAPI(index = null){
+      this.loaded = false;
+      let data = {
+        id_mails:[]
+      };
+      if (index == null){
+        this.mails.filter(mail=>mail.is_selected).forEach(mail=>{
+          data.id_mails.push(mail.id);
+        });
+      }
+      else{
+        data.id_mails.push(this.mails[index].id);
+      }
+
+
+      this.axios.put('http://localhost:8000/mails/read',data).then(()=>{
+        //this.showMarkedSuccessful = true;
+
+        if (index!=null)
+          this.mails[index].is_read = !this.mails[index].is_read;
+
+        this.mails.forEach(mail=>{
+          if (mail.is_selected)
+            mail.is_read = true;
+          mail.is_selected = false;
+        });
+      }).catch(error=>{
+        console.log(error);
+      }).then(()=>{
+        this.loaded = true;
+      });
+    },
+
     sentToTrashAPI(){
       let data = {
         id_mails:[],
@@ -147,10 +183,12 @@ name: "InboxComponent",
         this.loaded = true;
       });
     },
-    viewEmail(email){
-      console.log(email);
-      //todo falta mostrar el email completo en un componente externo
+
+    viewEmail(index, email){
+      this.markAsReadAPI(index);
+      this.$emit('view',email);
     },
+
     translateDate(date){
       return moment(date).fromNow();
     }
@@ -164,5 +202,8 @@ name: "InboxComponent",
   }
   .mark_as_read{
     font-weight: bold;
+  }
+  .md-list-item-text{
+    cursor: pointer;
   }
 </style>
