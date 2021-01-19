@@ -321,6 +321,7 @@ export default {
 
     changeOption(option){
       this.clearSelect();
+      this.menuVisible = false;
       this.optionMenuSelected = option;
       if (option === 0){
         this.title = this.label = 'Inbox';
