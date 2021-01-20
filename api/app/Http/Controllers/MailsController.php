@@ -77,7 +77,7 @@ class MailsController extends Controller
 
     public function getAll()
     {
-        $mails = Email::all();
+        $mails = Email::orderByDesc('created_at')->get();
         return \response()->json($mails);
     }
 

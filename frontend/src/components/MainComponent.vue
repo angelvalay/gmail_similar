@@ -106,7 +106,7 @@ import moment from "moment";
  * @returns {boolean} el resultado de la comparacion
  */
 function orderByCreatedAt(emailX, emailY){
-  return moment(emailX.created_at).isAfter(emailY.created_at);
+  return moment(emailX.created_at).isBefore(emailY.created_at);
 }
 
 export default {
