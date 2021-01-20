@@ -97,6 +97,10 @@ import NewEmailComponent from "@/components/NewEmailComponent";
 import ViewEmailComponent from "@/components/ViewEmailComponent";
 import moment from "moment";
 
+function orderByCreatedAt(emailX, emailY){
+  return moment(emailX.created_at).isAfter(emailY.created_at);
+}
+
 export default {
   name: 'MainComponent',
   components:{ViewEmailComponent, InboxComponent,  NewEmailComponent},
@@ -113,11 +117,11 @@ export default {
   computed:{
     filtered(){
       if (this.optionMenuSelected === 0){
-        return this.mails.filter(x=>x.mail_to === null && !x.is_deleted)
+        return this.mails.filter(x=>x.mail_to === null && !x.is_deleted).sort(orderByCreatedAt);
       }else if(this.optionMenuSelected === 1){
-        return this.mails.filter(x=>x.mail_to !== null && !x.is_deleted);
+        return this.mails.filter(x=>x.mail_to !== null && !x.is_deleted).sort(orderByCreatedAt);
       } else if(this.optionMenuSelected === 2){
-        return this.mails.filter(x => x.is_deleted);
+        return this.mails.filter(x => x.is_deleted).sort(orderByCreatedAt);
       }else{
         return this.mails;
       }
@@ -130,6 +134,8 @@ export default {
     this.getAllEmailsAPI();
   },
   methods:{
+
+
     clearSelect(){
       this.mails.forEach(mail=>{
         mail.is_selected = false;
@@ -224,13 +230,11 @@ export default {
       });
       this.axios.put('http://'+location.hostname+':8000/mails/trash',data).then(()=>{
         this.$refs.inboxC.onShowTrashSuccessful(true);
-        let lastIndexSelected = 0;
-        while(lastIndexSelected > -1){
-          lastIndexSelected = this.mails.findIndex(mail=>mail.is_selected);
-          if (lastIndexSelected === -1)
-            break;
-          this.mails.splice(lastIndexSelected,1);
-        }
+        this.mails.forEach(mail=>{
+          if (mail.is_selected)
+            mail.is_deleted = true;
+        });
+        this.clearSelect();
       }).catch(error=>{
         console.log(error);
       }).then(()=>{

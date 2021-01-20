@@ -75,27 +75,9 @@ class MailsController extends Controller
         return response(['status'=>'successful']);
     }
 
-    public function getTrash()
-    {
-        $mails = Email::where('is_deleted',1)->orderByDesc('created_at')->get();
-        return \response()->json($mails);
-    }
-
-    public function getInbox()
-    {
-        $mails = Email::where('is_deleted',0)->where('mail_to',null)->orderByDesc('created_at')->get();
-        return \response()->json($mails);
-    }
-
     public function getAll()
     {
-        $mails = DB::table('mails')->get();
-        return \response()->json($mails);
-    }
-
-    public function getSentEmails()
-    {
-        $mails = Email::where('is_deleted',0)->where('mail_from',null)->orderByDesc('created_at')->get();
+        $mails = Email::all();
         return \response()->json($mails);
     }
 
