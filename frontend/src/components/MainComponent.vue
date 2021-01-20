@@ -26,7 +26,7 @@
               <md-icon>delete</md-icon>
               <md-tooltip >To trash</md-tooltip>
             </md-button>
-            <md-button @click="sendToInboxAPI" v-if="optionMenuSelected === 2" class="md-icon-button" >
+            <md-button @click="restoreEmailsAPI" v-if="optionMenuSelected === 2" class="md-icon-button" >
               <md-icon>restore_from_trash</md-icon>
               <md-tooltip >Restore</md-tooltip>
             </md-button>
@@ -76,10 +76,10 @@
              @addNewEmail="addNewEmail"
         ></NewEmailComponent>
 
-        <InboxComponent
+        <EmailsComponent
             :loaded="loaded" :label="label" :icon="icon" v-show="optionMenuSelected !== 3" :mails="filtered" :selected="selected"
             @view="viewEmail" @markAsRead="markAsReadAPI" @markImportant="markAsImportantAPI"
-            ref="inboxC"></InboxComponent>
+            ref="inboxC"></EmailsComponent>
 
         <ViewEmailComponent
             v-show="optionMenuSelected === 3"
@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import InboxComponent from "@/components/InboxComponent.vue";
+import EmailsComponent from "@/components/EmailsComponent.vue";
 import NewEmailComponent from "@/components/NewEmailComponent";
 import ViewEmailComponent from "@/components/ViewEmailComponent";
 import moment from "moment";
@@ -103,7 +103,7 @@ function orderByCreatedAt(emailX, emailY){
 
 export default {
   name: 'MainComponent',
-  components:{ViewEmailComponent, InboxComponent,  NewEmailComponent},
+  components:{ViewEmailComponent, EmailsComponent,  NewEmailComponent},
   data: () => ({
     menuVisible: true,
     optionMenuSelected:0,
@@ -255,7 +255,7 @@ export default {
         data.id_mails.push(id);
       }
       this.axios.put('http://'+location.hostname+':8000/mails/read',data).then(()=>{
-        //this.showMarkedSuccessful = true;
+        this.$refs.inboxC.onShowMarkAsReadSuccessful(true);
 
         if (id != null){
           let indexMail = this.mails.findIndex(m=> m.id === id);
@@ -282,7 +282,7 @@ export default {
       });
       this.axios.put('http://'+location.hostname+':8000/mails/delete',data).then(()=>{
 
-        this.showSuccessfulMessageDelete = true;
+        this.$refs.inboxC.onShowDeleteSuccessful(true);
 
         let lastIndexSelected = 0;
         while(lastIndexSelected > -1){
@@ -297,7 +297,7 @@ export default {
 
       });
     },
-    sendToInboxAPI(){
+    restoreEmailsAPI(){
       let data = {
         id_mails:[],
         is_deleted:false
@@ -306,7 +306,7 @@ export default {
         data.id_mails.push(mail.id);
       });
       this.axios.put('http://'+location.hostname+':8000/mails/trash',data).then(()=>{
-        this.showSentInboxSuccessful = true;
+        this.$refs.inboxC.onShowRestoreSuccessful(true);
         let lastIndexSelected = 0;
         while(lastIndexSelected > -1){
           lastIndexSelected = this.mails.findIndex(mail=>mail.is_selected);

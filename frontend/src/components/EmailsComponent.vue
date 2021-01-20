@@ -45,23 +45,48 @@
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showUnmarkedSuccessful" md-persistent>
       <span>Email(s) unmarked as important!</span>
     </md-snackbar>
+    <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showMarkAsReadSuccessful" md-persistent>
+      <span>Email(s) marked as read!</span>
+    </md-snackbar>
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showTrashSuccessful" md-persistent>
       <span>Email(s) sent to trash!</span>
+    </md-snackbar>
+    <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showRestoreSuccessful" md-persistent>
+      <span>Email(s) restore!</span>
+    </md-snackbar>
+    <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showDeleteSuccessful" md-persistent>
+      <span>Email(s) deleted permanently!</span>
     </md-snackbar>
   </div>
 </template>
 
 <script>
 export default {
-name: "InboxComponent",
+name: "EmailsComponent",
   props:['mails','selected', 'loaded', 'icon','label'],
   data: () => ({
     showUnmarkedSuccessful:false,
     showMarkedSuccessful:false,
     showTrashSuccessful:false,
+    showRestoreSuccessful:false,
+    showMarkAsReadSuccessful:false,
+    showDeleteSuccessful:false,
     markAsImportant:false,
+
   }),
   methods:{
+    onShowDeleteSuccessful(newStatus){
+      this.showDeleteSuccessful = newStatus;
+    },
+
+    onShowMarkAsReadSuccessful(newStatus){
+      this.showMarkAsReadSuccessful = newStatus;
+    },
+
+    onShowRestoreSuccessful(newStatus){
+        this.showRestoreSuccessful = newStatus;
+    },
+
     onShowUnmarkedSuccessful(newStatus){
       this.showUnmarkedSuccessful = newStatus;
     },
