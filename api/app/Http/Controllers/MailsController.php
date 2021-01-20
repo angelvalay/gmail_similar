@@ -24,7 +24,7 @@ class MailsController extends Controller
         $email->title = $request->get('title');
         $email->is_important = 0;
         $email->is_deleted = 0;
-        $email->is_read = false;
+        $email->is_read = true;
         $email->save();
         return response()->json($email);
     }
