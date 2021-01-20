@@ -255,11 +255,11 @@ export default {
         data.id_mails.push(id);
       }
       this.axios.put('http://'+location.hostname+':8000/mails/read',data).then(()=>{
-        this.$refs.inboxC.onShowMarkAsReadSuccessful(true);
-
         if (id != null){
           let indexMail = this.mails.findIndex(m=> m.id === id);
           this.mails[indexMail].is_read = !this.mails[indexMail].is_read;
+        }else{
+          this.$refs.inboxC.onShowMarkAsReadSuccessful(true);
         }
 
         this.mails.forEach(mail=>{
