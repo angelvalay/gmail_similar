@@ -72,8 +72,8 @@
 
       <md-app-content>
         <NewEmailComponent
-            :showDialog="showDialog"
-            @hide="hideDialogNewEmail" @addNewEmail="addNewEmail"
+            ref="newEmailC"
+             @addNewEmail="addNewEmail"
         ></NewEmailComponent>
 
         <InboxComponent
@@ -85,7 +85,6 @@
             v-show="optionMenuSelected === 3"
             ref="viewC"></ViewEmailComponent>
       </md-app-content>
-
 
     </md-app>
 
@@ -339,10 +338,7 @@ export default {
     },
 
     showDialogNewEmail(){
-      this.showDialog = true;
-    },
-    hideDialogNewEmail() {
-      this.showDialog = false;
+      this.$refs.newEmailC.showDialog();
     },
     addNewEmail(email){
       this.addExtraProperties(email);

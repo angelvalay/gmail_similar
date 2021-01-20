@@ -1,6 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active.sync="showDialog">
+    <md-dialog :md-active.sync="show">
       <md-dialog-title>Send new email</md-dialog-title>
 
       <md-dialog-content>
@@ -36,8 +36,8 @@
 <script>
 export default {
 name: "NewEmailComponent",
-  props:['showDialog'],
   data:()=>({
+    show:false,
     showMessageSuccessful:false,
     showMessageFailed:false,
     inputMailTo:null,
@@ -65,8 +65,11 @@ name: "NewEmailComponent",
 
         });
     },
+    showDialog(){
+      this.show = true;
+    },
     hideDialog(){
-      this.$emit('hide');
+      this.show = false;
     }
   }
 }
