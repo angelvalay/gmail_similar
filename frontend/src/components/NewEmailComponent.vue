@@ -2,26 +2,27 @@
   <div>
     <md-dialog :md-active.sync="show">
       <md-dialog-title>Send new email</md-dialog-title>
+      <form @submit.prevent="addNewEmailAPI">
+        <md-dialog-content>
+            <md-field>
+              <label>Mail to</label>
+              <md-input type="email" v-model="inputMailTo" required></md-input>
+            </md-field>
+            <md-field>
+              <label>Title</label>
+              <md-input v-model="inputTitle" maxlength="50" required></md-input>
+            </md-field>
+            <md-field>
+              <label>Body</label>
+              <md-textarea v-model="inputBody" maxlength="255" required></md-textarea>
+            </md-field>
+        </md-dialog-content>
 
-      <md-dialog-content>
-        <md-field>
-          <label>Mail to</label>
-          <md-input v-model="inputMailTo" required></md-input>
-        </md-field>
-        <md-field>
-          <label>Title</label>
-          <md-input v-model="inputTitle" required></md-input>
-        </md-field>
-        <md-field>
-          <label>Body</label>
-          <md-textarea v-model="inputBody" maxlength="255" required></md-textarea>
-        </md-field>
-      </md-dialog-content>
-
-      <md-dialog-actions>
-        <md-button class="md-primary" @click="hideDialog">Close</md-button>
-        <md-button class="md-primary" @click="addNewEmailAPI">Send</md-button>
-      </md-dialog-actions>
+        <md-dialog-actions>
+          <md-button class="md-primary" @click="hideDialog">Close</md-button>
+          <md-button class="md-primary" type="submit">Send</md-button>
+        </md-dialog-actions>
+      </form>
     </md-dialog>
 
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showMessageSuccessful" md-persistent>

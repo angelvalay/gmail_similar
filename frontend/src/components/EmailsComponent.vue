@@ -8,7 +8,7 @@
           class="md-primary"
           :md-icon="icon"
           :md-label="'Nothing in '+label"
-          md-description="Wait a moment and try again later.">
+          :md-description="'There is no mail in the '+label+ ' please try again later.'">
       </md-empty-state>
 
 
@@ -39,6 +39,7 @@
       </div>
       <!-- fin de los correos-->
     </md-list>
+    <!-- Notificaciones-->
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showMarkedSuccessful" md-persistent>
       <span>Email(s) marked as important!</span>
     </md-snackbar>
@@ -57,6 +58,7 @@
     <md-snackbar :md-position="'left'" :md-duration="4000" :md-active.sync="showDeleteSuccessful" md-persistent>
       <span>Email(s) deleted permanently!</span>
     </md-snackbar>
+    <!--Fin de las notificaciones-->
   </div>
 </template>
 

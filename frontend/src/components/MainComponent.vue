@@ -35,7 +35,6 @@
               <md-tooltip >Delete</md-tooltip>
             </md-button>
           </div>
-
         </div>
         <!--Fin de las opciones-->
       </md-app-toolbar>
@@ -77,13 +76,16 @@
         ></NewEmailComponent>
 
         <EmailsComponent
-            :loaded="loaded" :label="label" :icon="icon" v-show="optionMenuSelected !== 3" :mails="filtered" :selected="selected"
+            :loaded="loaded" :label="label" :icon="icon" :mails="filtered" :selected="selected"
+            v-show="optionMenuSelected !== 3"
             @view="viewEmail" @markAsRead="markAsReadAPI" @markImportant="markAsImportantAPI"
-            ref="inboxC"></EmailsComponent>
+            ref="inboxC"
+        ></EmailsComponent>
 
         <ViewEmailComponent
             v-show="optionMenuSelected === 3"
-            ref="viewC"></ViewEmailComponent>
+            ref="viewC"
+        ></ViewEmailComponent>
       </md-app-content>
 
     </md-app>
@@ -97,6 +99,12 @@ import NewEmailComponent from "@/components/NewEmailComponent";
 import ViewEmailComponent from "@/components/ViewEmailComponent";
 import moment from "moment";
 
+/**
+ * Funcion que permite comparar las fechas que fueron creados dos correos
+ * @param emailX {string}
+ * @param emailY {string}
+ * @returns {boolean} el resultado de la comparacion
+ */
 function orderByCreatedAt(emailX, emailY){
   return moment(emailX.created_at).isAfter(emailY.created_at);
 }
@@ -115,6 +123,10 @@ export default {
     showDialog:false,
   }),
   computed:{
+    /**
+     * Esta variable computada es usada para filtrar los correos que se van a visualizar,
+     * de acuerdo a la opcion seleccionado
+     */
     filtered(){
       if (this.optionMenuSelected === 0){
         return this.mails.filter(x=>x.mail_to === null && !x.is_deleted).sort(orderByCreatedAt);
@@ -126,6 +138,9 @@ export default {
         return this.mails;
       }
     },
+    /**
+     * Esta variable computada devuelve la cantidad de elementos que se encuentran seleccionados
+    */
     selected() {
       return this.mails.filter(x=>x.is_selected).length;
     },
@@ -134,14 +149,18 @@ export default {
     this.getAllEmailsAPI();
   },
   methods:{
-
-
+    /**
+     * Desmarca los correos seleccionados
+     */
     clearSelect(){
       this.mails.forEach(mail=>{
         mail.is_selected = false;
       });
     },
 
+    /**
+     * Es utilizado para obtener el texto que se visualizara en caso de que el emisor sea uno mismo (yo).
+     */
     getMail(mail){
       if (mail.mail_from){
         if (mail.mail_to){
@@ -155,12 +174,22 @@ export default {
       }
     },
 
+    /**
+     * Agrega propiedades extras a un correo
+     *
+     * is_selected - para identificar si el correo esta seleccionado.
+     * first_letter - para mostrar la primera letra en la lista
+     * created_from_now - muestra hace cuanto se creo el correo
+     */
     addExtraProperties(mail){
       mail.is_selected = false;
       mail.first_letter = this.getMail(mail).substring(0,1).toUpperCase();
       mail.created_from_now = moment(mail.created_at).fromNow();
     },
 
+    /**
+     * Consumo de la API REST para obtener los correos almacenados
+     */
     getAllEmailsAPI(){
       this.loaded = false;
       this.axios.get('http://'+location.hostname+':8000/mails').then((response)=>{
@@ -175,6 +204,11 @@ export default {
         this.loaded = true;
       })
     },
+    /**
+     * Consumo de la API REST para marcar como importante varios correos
+     * @param id {int} id del email - se usa para cuando se realizar un solo cambio
+     * @param newStatus - true para marcalo, false para desmarcarlo
+     */
     markAsImportantAPI(id, newStatus){
       this.loaded = false;
       let data = {
@@ -219,6 +253,9 @@ export default {
         this.loaded = true;
       });
     },
+    /**
+     * Consumo de la API REST para enviar a la basura un conjunto de correos seleccionados
+     */
     sentToTrashAPI(){
       let data = {
         id_mails:[],
@@ -241,6 +278,10 @@ export default {
         this.loaded = true;
       });
     },
+    /**
+     * Consumo de la API REST para marcar como leido los correos seleccionados
+     * @param id {int} id del correo - solo se usa para mandar un unico correo
+     */
     markAsReadAPI(id = null){
       this.loaded = false;
       let data = {
@@ -273,6 +314,9 @@ export default {
         this.loaded = true;
       });
     },
+    /**
+     * Consumo de la API REST para borrar los correos seleccionados permanente
+     */
     deleteMailsSelectedAPI(){
       let data = {
         id_mails:[]
@@ -297,6 +341,9 @@ export default {
 
       });
     },
+    /**
+     * Consumo de la API REST para restaurar correos a la bandeja principal
+     */
     restoreEmailsAPI(){
       let data = {
         id_mails:[],
@@ -322,6 +369,11 @@ export default {
     },
 
 
+    /**
+     * Permite realizar cambios entre las opciones (inbox, sent, trash)
+     *
+     * @param option {int} cada opcion tiene identificado un numero (inbox -0 , sent - 1, trash -2)
+     */
     changeOption(option){
       this.clearSelect();
       this.menuVisible = false;
@@ -337,17 +389,32 @@ export default {
         this.icon = 'delete_outline';
       }
     },
+
+    /**
+     * Actualiza la lista de correos
+     */
     reload(){
       this.getAllEmailsAPI();
     },
 
+    /**
+     * Muestra el modal para agregar un correo nuevo
+     */
     showDialogNewEmail(){
       this.$refs.newEmailC.showDialog();
     },
+    /**
+     * Agrega el correo guardado en la base de datos a la lista
+     * @param email
+     */
     addNewEmail(email){
       this.addExtraProperties(email);
       this.mails.push(email);
     },
+    /**
+     * Permite visualizar un correo especifico
+     * @param email {json} - datos del email
+     */
     viewEmail(email){
       this.optionMenuSelected = 3;
       this.$refs.viewC.viewEmail(email);
@@ -357,19 +424,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.md-app {
-  border: 1px solid rgba(#000, .12);
-}
-
-.md-drawer{
-  max-width: 250px;
-}
-.md-app-content{
-  padding: 0;
-  height: calc(100vh - 70px);
-}
-.button-primary{
-  padding: 10px !important;
-  width: 100%;
-}
+  .md-app {
+    border: 1px solid rgba(#000, .12);
+  }
+  .md-drawer{
+    max-width: 250px;
+  }
+  .md-app-content{
+    padding: 0;
+    height: calc(100vh - 70px);
+  }
+  .button-primary{
+    padding: 10px !important;
+    width: 100%;
+  }
 </style>
